@@ -32,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontSynthesis
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -39,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cardguesser.shared.generated.resources.Res
 import cardguesser.shared.generated.resources.correct
+import cardguesser.shared.generated.resources.end_round
 import cardguesser.shared.generated.resources.pass
 import cardguesser.shared.generated.resources.time_up
 import com.example.cardguesser.data.Category
@@ -50,6 +52,7 @@ import com.example.cardguesser.game.WordResult
 import com.example.cardguesser.platform.TiltSensorEffect
 import com.example.cardguesser.platform.rememberGameFeedback
 import com.example.cardguesser.ui.components.AppText
+import com.example.cardguesser.ui.components.CircleButton
 import com.example.cardguesser.ui.components.Glyph
 import com.example.cardguesser.ui.components.GlyphIcon
 import com.example.cardguesser.ui.components.RemoteImage
@@ -71,6 +74,7 @@ fun GameScreen(
     durationSeconds: Int,
     imagesEnabled: Boolean,
     onFinished: (List<WordResult>) -> Unit,
+    onExit: (List<WordResult>) -> Unit,
 ) {
     val palette = LocalPalette.current
     val feedback = rememberGameFeedback()
@@ -171,6 +175,16 @@ fun GameScreen(
                     ) {
                         AppText(formatTime(remaining), size = 24.sp, weight = FontWeight.Bold, maxLines = 1)
                     }
+                    // Ends the round right away, keeping the answers given so far.
+                    CircleButton(
+                        Glyph.Cross,
+                        stringResource(Res.string.end_round),
+                        onClick = { onExit(round.finish()) },
+                        modifier = Modifier.align(Alignment.TopStart),
+                        size = 46.dp,
+                        background = palette.surface,
+                        tint = palette.textMuted,
+                    )
                     word?.let { current ->
                         WordDisplay(
                             current,
@@ -211,6 +225,7 @@ private fun WordDisplay(entry: WordEntry, showImage: Boolean, modifier: Modifier
                     style = TextStyle(
                         fontFamily = LocalFontFamily.current,
                         fontWeight = FontWeight.Bold,
+                        fontSynthesis = FontSynthesis.None,
                         color = palette.text,
                         textAlign = TextAlign.Center,
                     ),

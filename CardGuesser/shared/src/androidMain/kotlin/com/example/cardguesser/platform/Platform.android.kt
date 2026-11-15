@@ -17,6 +17,10 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.sp
+import com.example.cardguesser.ui.components.AppText
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
@@ -143,4 +147,9 @@ actual fun rememberSettingsStore(): SettingsStore {
 @Composable
 actual fun PlatformBackHandler(enabled: Boolean, onBack: () -> Unit) {
     BackHandler(enabled, onBack)
+}
+
+@Composable
+actual fun EmojiIcon(emoji: String, size: Dp, modifier: Modifier) {
+    AppText(emoji, modifier = modifier, size = size.value.sp)
 }

@@ -56,6 +56,7 @@ import cardguesser.shared.generated.resources.results_title
 import com.example.cardguesser.data.Category
 import com.example.cardguesser.data.WordEntry
 import com.example.cardguesser.game.WordResult
+import com.example.cardguesser.platform.EmojiIcon
 import com.example.cardguesser.platform.PlatformBackHandler
 import com.example.cardguesser.ui.components.AppText
 import com.example.cardguesser.ui.components.Glyph
@@ -85,7 +86,11 @@ fun ResultsScreen(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Column(Modifier.weight(1f)) {
                     AppText(stringResource(Res.string.results_title), size = 34.sp, weight = FontWeight.Bold)
-                    AppText("${category.icon}  ${category.name}", size = 16.sp, color = palette.textMuted, maxLines = 1)
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        EmojiIcon(category.icon, 15.dp)
+                        Spacer(Modifier.width(8.dp))
+                        AppText(category.name, size = 16.sp, color = palette.textMuted, maxLines = 1)
+                    }
                 }
                 Box(
                     Modifier

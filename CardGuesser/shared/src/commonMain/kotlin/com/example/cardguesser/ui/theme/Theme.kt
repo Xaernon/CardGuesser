@@ -61,7 +61,48 @@ object Palettes {
         textMuted = Color(0xFF9A94C6),
     )
 
-    val all = listOf(Midnight, Lagoon, Grape)
+    val Sky = Palette(
+        id = "sky",
+        name = "Sky",
+        background = Color(0xFF0F1E3D),
+        surface = Color(0xFF1A2F5C),
+        surfaceHigh = Color(0xFF26417D),
+        accent = Color(0xFF7CC4FF),
+        onAccent = Color(0xFF0D1B36),
+        textMuted = Color(0xFF8AA0C8),
+    )
+    val Coral = Palette(
+        id = "coral",
+        name = "Coral",
+        background = Color(0xFF171A3B),
+        surface = Color(0xFF242958),
+        surfaceHigh = Color(0xFF333975),
+        accent = Color(0xFFFF8E78),
+        onAccent = Color(0xFF231A33),
+        textMuted = Color(0xFF9497C2),
+    )
+    val Lime = Palette(
+        id = "lime",
+        name = "Lime",
+        background = Color(0xFF101F38),
+        surface = Color(0xFF1B3154),
+        surfaceHigh = Color(0xFF274472),
+        accent = Color(0xFFC6E76F),
+        onAccent = Color(0xFF14233A),
+        textMuted = Color(0xFF8CA2BF),
+    )
+    val Lavender = Palette(
+        id = "lavender",
+        name = "Lavender",
+        background = Color(0xFF16173F),
+        surface = Color(0xFF23255F),
+        surfaceHigh = Color(0xFF32357F),
+        accent = Color(0xFFC4A8FF),
+        onAccent = Color(0xFF1C1840),
+        textMuted = Color(0xFF9796C8),
+    )
+
+    val all = listOf(Midnight, Lagoon, Grape, Sky, Coral, Lime, Lavender)
     val default = Midnight
 
     fun byId(id: String): Palette = all.firstOrNull { it.id == id } ?: default

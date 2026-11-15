@@ -18,6 +18,17 @@ kotlin {
             isStatic = true
         }
     }
+    // Web version (used for demos on phones the native app cannot be installed on).
+    @OptIn(org.jetbrains.kotlin.gradle.ExperimentalWasmDsl::class)
+    wasmJs {
+        outputModuleName = "cardguesser"
+        browser {
+            commonWebpackConfig {
+                outputFileName = "cardguesser.js"
+            }
+        }
+        binaries.executable()
+    }
     android {
        namespace = "com.example.cardguesser.shared"
        compileSdk = libs.versions.android.compileSdk.get().toInt()
@@ -44,6 +55,10 @@ kotlin {
             implementation(libs.androidx.activity.compose)
             implementation(libs.androidx.core.ktx)
             implementation(libs.ktor.client.okhttp)
+        }
+        wasmJsMain.dependencies {
+            implementation(libs.ktor.client.js)
+            implementation(libs.kotlinx.browser)
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)

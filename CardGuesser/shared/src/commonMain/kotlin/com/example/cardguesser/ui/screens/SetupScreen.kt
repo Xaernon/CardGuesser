@@ -6,10 +6,8 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -22,10 +20,8 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -46,10 +42,8 @@ import cardguesser.shared.generated.resources.close
 import cardguesser.shared.generated.resources.decrease_time
 import cardguesser.shared.generated.resources.increase_time
 import cardguesser.shared.generated.resources.round_time
-import cardguesser.shared.generated.resources.setting_font
 import cardguesser.shared.generated.resources.setting_images
 import cardguesser.shared.generated.resources.setting_images_description
-import cardguesser.shared.generated.resources.setting_theme
 import cardguesser.shared.generated.resources.settings
 import cardguesser.shared.generated.resources.start
 import com.example.cardguesser.AppSettings
@@ -61,10 +55,7 @@ import com.example.cardguesser.ui.components.Glyph
 import com.example.cardguesser.ui.components.PillButton
 import com.example.cardguesser.ui.components.ToggleSwitch
 import com.example.cardguesser.ui.components.formatTime
-import com.example.cardguesser.ui.components.pressable
-import com.example.cardguesser.ui.theme.AppFont
 import com.example.cardguesser.ui.theme.LocalPalette
-import com.example.cardguesser.ui.theme.Palettes
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -210,45 +201,6 @@ private fun SettingsSheet(settings: AppSettings, onClose: () -> Unit) {
             color = palette.textMuted,
             lineHeight = 19.sp,
         )
-
-        Spacer(Modifier.height(22.dp))
-        AppText(stringResource(Res.string.setting_theme), size = 19.sp, weight = FontWeight.Bold)
-        Spacer(Modifier.height(10.dp))
-        Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            Palettes.all.forEach { option ->
-                val selected = option.id == settings.palette.id
-                Row(
-                    Modifier
-                        .clip(CircleShape)
-                        .background(option.background)
-                        .border(2.dp, if (selected) palette.text else Color.Transparent, CircleShape)
-                        .pressable { settings.updatePalette(option) }
-                        .padding(horizontal = 12.dp, vertical = 9.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Box(Modifier.size(14.dp).clip(CircleShape).background(option.accent))
-                    Spacer(Modifier.width(7.dp))
-                    AppText(option.name, size = 14.sp, weight = FontWeight.Bold, color = option.text)
-                }
-            }
-        }
-
-        Spacer(Modifier.height(22.dp))
-        AppText(stringResource(Res.string.setting_font), size = 19.sp, weight = FontWeight.Bold)
-        Spacer(Modifier.height(10.dp))
-        Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            AppFont.entries.forEach { option ->
-                val selected = option == settings.font
-                PillButton(
-                    option.label,
-                    onClick = { settings.updateFont(option) },
-                    background = if (selected) palette.accent else palette.surfaceHigh,
-                    textColor = if (selected) palette.onAccent else palette.text,
-                    textSize = 15.sp,
-                    padding = PaddingValues(horizontal = 18.dp, vertical = 10.dp),
-                )
-            }
-        }
 
         Spacer(Modifier.height(26.dp))
         PillButton(

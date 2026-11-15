@@ -34,6 +34,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontSynthesis
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -62,6 +63,8 @@ fun AppText(
             fontFamily = LocalFontFamily.current,
             fontSize = size,
             fontWeight = weight,
+            // The fonts are variable, so every weight is real; never let the platform fake bold on top.
+            fontSynthesis = FontSynthesis.None,
             color = color,
             textAlign = align,
             lineHeight = lineHeight,
@@ -95,7 +98,7 @@ fun Modifier.pressable(
         )
 }
 
-enum class Glyph { Check, Cross, Plus, Minus, Back }
+enum class Glyph { Check, Cross, Plus, Minus, Back, Menu }
 
 /** Line icons drawn by hand so they look the same on every platform. */
 @Composable
@@ -125,6 +128,11 @@ fun GlyphIcon(glyph: Glyph, color: Color, modifier: Modifier = Modifier, size: D
                 line(0.14f, 0.5f, 0.86f, 0.5f)
             }
             Glyph.Minus -> line(0.14f, 0.5f, 0.86f, 0.5f)
+            Glyph.Menu -> {
+                line(0.12f, 0.22f, 0.88f, 0.22f)
+                line(0.12f, 0.5f, 0.88f, 0.5f)
+                line(0.12f, 0.78f, 0.88f, 0.78f)
+            }
             Glyph.Back -> drawPath(
                 Path().apply {
                     moveTo(w * 0.62f, h * 0.16f)
@@ -172,12 +180,14 @@ fun PillButton(
     textColor: Color = LocalPalette.current.onAccent,
     textSize: TextUnit = 18.sp,
     padding: PaddingValues = PaddingValues(horizontal = 28.dp, vertical = 14.dp),
+    enabled: Boolean = true,
 ) {
     Box(
         modifier
+            .alpha(if (enabled) 1f else 0.4f)
             .clip(CircleShape)
             .background(background)
-            .pressable(onClick = onClick)
+            .pressable(enabled = enabled, onClick = onClick)
             .padding(padding),
         contentAlignment = Alignment.Center,
     ) {

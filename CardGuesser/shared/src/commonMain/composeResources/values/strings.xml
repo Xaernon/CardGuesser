@@ -20,7 +20,7 @@
     <string name="time_up">Time’s up!</string>
     <string name="results_title">Results</string>
     <string name="results_score">%1$d / %2$d</string>
-    <string name="results_hint">Tap a word to see its picture. Tap ✓ or ✕ to fix a mistake.</string>
+    <string name="results_hint">Tap a word to see its picture. Tap its mark to fix a mistake.</string>
     <string name="results_empty">No words this round.</string>
     <string name="play_again">Play again</string>
     <string name="change_category">Categories</string>
@@ -28,4 +28,9 @@
     <string name="image_failed">Couldn’t load the picture</string>
     <string name="mark_guessed">Mark as guessed</string>
     <string name="mark_failed">Mark as failed</string>
+    <string name="menu">Menu</string>
+    <string name="open_menu">Open menu</string>
+    <string name="setting_language">Language</string>
+    <string name="language_coming_soon">%1$s (coming soon)</string>
+    <string name="end_round">End round</string>
 </resources>

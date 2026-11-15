@@ -5,6 +5,10 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.sp
+import com.example.cardguesser.ui.components.AppText
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.useContents
 import platform.CoreMotion.CMMotionManager
@@ -86,4 +90,9 @@ actual fun rememberSettingsStore(): SettingsStore = remember { IosSettingsStore(
 @Composable
 actual fun PlatformBackHandler(enabled: Boolean, onBack: () -> Unit) {
     // iOS has no system back button; screens provide their own back controls.
+}
+
+@Composable
+actual fun EmojiIcon(emoji: String, size: Dp, modifier: Modifier) {
+    AppText(emoji, modifier = modifier, size = size.value.sp)
 }

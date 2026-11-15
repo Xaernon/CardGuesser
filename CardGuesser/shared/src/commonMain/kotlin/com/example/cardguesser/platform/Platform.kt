@@ -1,6 +1,8 @@
 package com.example.cardguesser.platform
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.Dp
 
 /** While [enabled], forces landscape and hides the status bar; otherwise portrait. */
 @Composable
@@ -44,3 +46,10 @@ expect fun rememberSettingsStore(): SettingsStore
 /** Intercepts the system back gesture where the platform has one. */
 @Composable
 expect fun PlatformBackHandler(enabled: Boolean, onBack: () -> Unit)
+
+/**
+ * Draws an emoji (category icons) at roughly [size]. Native platforms draw it as text; the web
+ * canvas has no emoji font, so there the browser renders it instead.
+ */
+@Composable
+expect fun EmojiIcon(emoji: String, size: Dp, modifier: Modifier = Modifier)

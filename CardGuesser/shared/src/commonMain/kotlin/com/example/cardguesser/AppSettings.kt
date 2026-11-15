@@ -4,6 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import com.example.cardguesser.data.AppLanguage
 import com.example.cardguesser.platform.SettingsStore
 import com.example.cardguesser.ui.theme.AppFont
 import com.example.cardguesser.ui.theme.Palette
@@ -23,6 +24,9 @@ class AppSettings(private val store: SettingsStore) {
         private set
 
     var font by mutableStateOf(AppFont.byId(store.getString(KEY_FONT, AppFont.Nunito.id)))
+        private set
+
+    var language by mutableStateOf(AppLanguage.byCode(store.getString(KEY_LANGUAGE, AppLanguage.default.code)))
         private set
 
     val canDecreaseDuration get() = durationSeconds > MIN_DURATION
@@ -48,6 +52,12 @@ class AppSettings(private val store: SettingsStore) {
         store.putString(KEY_FONT, value.id)
     }
 
+    fun updateLanguage(value: AppLanguage) {
+        if (!value.available) return
+        language = value
+        store.putString(KEY_LANGUAGE, value.code)
+    }
+
     companion object {
         const val MIN_DURATION = 30
         const val MAX_DURATION = 120
@@ -58,5 +68,6 @@ class AppSettings(private val store: SettingsStore) {
         private const val KEY_IMAGES = "images_enabled"
         private const val KEY_PALETTE = "palette"
         private const val KEY_FONT = "font"
+        private const val KEY_LANGUAGE = "language"
     }
 }

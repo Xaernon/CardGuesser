@@ -50,7 +50,8 @@ fun App() {
     var categories by remember { mutableStateOf<List<Category>>(emptyList()) }
     var screen by remember { mutableStateOf<Screen>(Screen.Categories) }
 
-    LaunchedEffect(Unit) { categories = CategoryRepository.load() }
+    // Words differ per language, so the list is reloaded when the language changes.
+    LaunchedEffect(settings.language) { categories = CategoryRepository.load(settings.language) }
 
     LandscapeMode(screen.landscape)
     // Held here rather than in each screen: screens overlap briefly while they cross-fade, so a
@@ -74,6 +75,7 @@ fun App() {
                 when (current) {
                     Screen.Categories -> CategoriesScreen(
                         categories,
+                        settings,
                         onSelect = { screen = Screen.Setup(it) },
                     )
 
@@ -93,6 +95,14 @@ fun App() {
                         durationSeconds = settings.durationSeconds,
                         imagesEnabled = settings.imagesEnabled,
                         onFinished = { screen = Screen.Results(current.category, it) },
+                        // Leaving before answering anything has no results worth showing.
+                        onExit = { results ->
+                            screen = if (results.isEmpty()) {
+                                Screen.Setup(current.category)
+                            } else {
+                                Screen.Results(current.category, results)
+                            }
+                        },
                     )
 
                     is Screen.Results -> ResultsScreen(
