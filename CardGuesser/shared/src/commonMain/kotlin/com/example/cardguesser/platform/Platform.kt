@@ -1,0 +1,46 @@
+package com.example.cardguesser.platform
+
+import androidx.compose.runtime.Composable
+
+/** While [enabled], forces landscape and hides the status bar; otherwise portrait. */
+@Composable
+expect fun LandscapeMode(enabled: Boolean)
+
+/** Keeps the screen awake for as long as this is in the composition. */
+@Composable
+expect fun KeepScreenOn()
+
+/**
+ * Reports the gravity component along the axis coming out of the screen, in g:
+ * +1 when the screen faces the sky, -1 when it faces the floor.
+ */
+@Composable
+expect fun TiltSensorEffect(onReading: (Float) -> Unit)
+
+/** Vibration and sound cues, for a player who cannot see the screen. */
+interface GameFeedback {
+    fun correct()
+    fun pass()
+    fun tick()
+    fun timeUp()
+}
+
+@Composable
+expect fun rememberGameFeedback(): GameFeedback
+
+/** Small persistent key-value store for user settings. */
+interface SettingsStore {
+    fun getInt(key: String, default: Int): Int
+    fun putInt(key: String, value: Int)
+    fun getBoolean(key: String, default: Boolean): Boolean
+    fun putBoolean(key: String, value: Boolean)
+    fun getString(key: String, default: String): String
+    fun putString(key: String, value: String)
+}
+
+@Composable
+expect fun rememberSettingsStore(): SettingsStore
+
+/** Intercepts the system back gesture where the platform has one. */
+@Composable
+expect fun PlatformBackHandler(enabled: Boolean, onBack: () -> Unit)

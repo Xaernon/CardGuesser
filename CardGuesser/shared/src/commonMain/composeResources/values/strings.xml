@@ -1,0 +1,31 @@
+<resources>
+    <string name="app_name">CardGuesser</string>
+    <string name="categories_subtitle">Pick a category to start</string>
+    <string name="words_count">%1$d words</string>
+    <string name="back">Back</string>
+    <string name="round_time">Round time</string>
+    <string name="decrease_time">Less time</string>
+    <string name="increase_time">More time</string>
+    <string name="start">Start</string>
+    <string name="settings">Settings</string>
+    <string name="close">Done</string>
+    <string name="setting_images">Images</string>
+    <string name="setting_images_description">Shows a picture next to each word, so the players giving clues get a visual reminder to help the one holding the phone guess. Needs an internet connection.</string>
+    <string name="setting_theme">Theme</string>
+    <string name="setting_font">Font (dev)</string>
+    <string name="forehead_prompt">Put your phone on your forehead!</string>
+    <string name="tilt_hint">Tilt down = guessed  ·  Tilt up = pass</string>
+    <string name="correct">Correct!</string>
+    <string name="pass">Pass</string>
+    <string name="time_up">Time’s up!</string>
+    <string name="results_title">Results</string>
+    <string name="results_score">%1$d / %2$d</string>
+    <string name="results_hint">Tap a word to see its picture. Tap ✓ or ✕ to fix a mistake.</string>
+    <string name="results_empty">No words this round.</string>
+    <string name="play_again">Play again</string>
+    <string name="change_category">Categories</string>
+    <string name="no_image">No picture for this one yet</string>
+    <string name="image_failed">Couldn’t load the picture</string>
+    <string name="mark_guessed">Mark as guessed</string>
+    <string name="mark_failed">Mark as failed</string>
+</resources>
