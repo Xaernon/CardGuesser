@@ -4,9 +4,11 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -198,65 +200,93 @@ fun GameScreen(
     }
 }
 
-/** The word takes centre stage; the optional image stays small beside it. */
+/**
+ * The word and, when images are on, its picture side by side. The picture gets a fixed slot (about 40% of
+ * the width, full height) so the word never jumps when it loads; inside the slot the frame takes the
+ * picture's own shape (tall poster, wide flag, square logo) so nothing is cropped away.
+ */
 @Composable
 private fun WordDisplay(entry: WordEntry, showImage: Boolean, modifier: Modifier = Modifier) {
     val palette = LocalPalette.current
     val image = entry.image.takeIf { showImage }
     key(entry) {
         var imageFailed by remember { mutableStateOf(false) }
-        Row(
-            modifier,
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center,
-        ) {
-            if (image != null && !imageFailed) {
-                RemoteImage(
-                    url = image,
-                    contentDescription = null,
-                    modifier = Modifier.size(132.dp).clip(RoundedCornerShape(26.dp)).background(palette.surface),
-                    onFailed = { imageFailed = true },
-                )
-                Spacer(Modifier.width(24.dp))
-            }
-            Column(
-                Modifier.weight(1f).fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally,
+        var aspect by remember { mutableStateOf<Float?>(null) }  // width / height, once loaded
+        BoxWithConstraints(modifier) {
+            val slotWidth = maxWidth * IMAGE_SLOT_SHARE
+            val slotHeight = maxHeight
+            Row(
+                Modifier.fillMaxSize(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
             ) {
-                Box(Modifier.weight(1f, fill = false), contentAlignment = Alignment.Center) {
-                    BasicText(
-                        text = entry.name,
-                        style = TextStyle(
-                            fontFamily = LocalFontFamily.current,
-                            fontWeight = FontWeight.Bold,
-                            fontSynthesis = FontSynthesis.None,
-                            color = palette.text,
-                            textAlign = TextAlign.Center,
-                        ),
-                        autoSize = TextAutoSize.StepBased(minFontSize = 30.sp, maxFontSize = 104.sp, stepSize = 2.sp),
-                        maxLines = 3,
-                        overflow = TextOverflow.Ellipsis,
-                    )
+                if (image != null && !imageFailed) {
+                    Box(Modifier.width(slotWidth).fillMaxHeight(), contentAlignment = Alignment.Center) {
+                        // largest frame of the picture's shape that fits the slot (3:4 until it has loaded)
+                        val ratio = (aspect ?: 0.75f).coerceIn(0.5f, 2f)
+                        val frameHeight = minOf(slotHeight, slotWidth / ratio)
+                        RemoteImage(
+                            url = image,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(width = frameHeight * ratio, height = frameHeight)
+                                .clip(RoundedCornerShape(24.dp))
+                                .background(palette.surface),
+                            onFailed = { imageFailed = true },
+                            onAspectRatio = { aspect = it },
+                        )
+                    }
+                    Spacer(Modifier.width(28.dp))
                 }
-                // Other names for the same thing (Enen no Shouboutai under Fire Force), small and quiet
-                if (entry.aliases.isNotEmpty()) {
-                    Spacer(Modifier.height(6.dp))
-                    BasicText(
-                        text = entry.aliases.joinToString(" · "),
-                        style = TextStyle(
-                            fontFamily = LocalFontFamily.current,
-                            fontWeight = FontWeight.SemiBold,
-                            fontSynthesis = FontSynthesis.None,
-                            color = palette.textMuted,
-                            textAlign = TextAlign.Center,
-                            fontSize = 22.sp,
-                        ),
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                }
+                WordText(entry, Modifier.weight(1f).fillMaxSize())
             }
+        }
+    }
+}
+
+/** Share of the screen width the picture may use; the word always keeps the rest. */
+private const val IMAGE_SLOT_SHARE = 0.4f
+
+/** The word, as big as fits (never below 30 sp), with its other names small underneath. */
+@Composable
+private fun WordText(entry: WordEntry, modifier: Modifier) {
+    val palette = LocalPalette.current
+    Column(
+        modifier,
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Box(Modifier.weight(1f, fill = false), contentAlignment = Alignment.Center) {
+            BasicText(
+                text = entry.name,
+                style = TextStyle(
+                    fontFamily = LocalFontFamily.current,
+                    fontWeight = FontWeight.Bold,
+                    fontSynthesis = FontSynthesis.None,
+                    color = palette.text,
+                    textAlign = TextAlign.Center,
+                ),
+                autoSize = TextAutoSize.StepBased(minFontSize = 30.sp, maxFontSize = 104.sp, stepSize = 2.sp),
+                maxLines = 3,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
+        // Other names for the same thing (Enen no Shouboutai under Fire Force), small and quiet
+        if (entry.aliases.isNotEmpty()) {
+            Spacer(Modifier.height(6.dp))
+            BasicText(
+                text = entry.aliases.joinToString(" · "),
+                style = TextStyle(
+                    fontFamily = LocalFontFamily.current,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSynthesis = FontSynthesis.None,
+                    color = palette.textMuted,
+                    textAlign = TextAlign.Center,
+                    fontSize = 22.sp,
+                ),
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+            )
         }
     }
 }
