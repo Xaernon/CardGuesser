@@ -219,20 +219,43 @@ private fun WordDisplay(entry: WordEntry, showImage: Boolean, modifier: Modifier
                 )
                 Spacer(Modifier.width(24.dp))
             }
-            Box(Modifier.weight(1f).fillMaxSize(), contentAlignment = Alignment.Center) {
-                BasicText(
-                    text = entry.name,
-                    style = TextStyle(
-                        fontFamily = LocalFontFamily.current,
-                        fontWeight = FontWeight.Bold,
-                        fontSynthesis = FontSynthesis.None,
-                        color = palette.text,
-                        textAlign = TextAlign.Center,
-                    ),
-                    autoSize = TextAutoSize.StepBased(minFontSize = 30.sp, maxFontSize = 104.sp, stepSize = 2.sp),
-                    maxLines = 3,
-                    overflow = TextOverflow.Ellipsis,
-                )
+            Column(
+                Modifier.weight(1f).fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Box(Modifier.weight(1f, fill = false), contentAlignment = Alignment.Center) {
+                    BasicText(
+                        text = entry.name,
+                        style = TextStyle(
+                            fontFamily = LocalFontFamily.current,
+                            fontWeight = FontWeight.Bold,
+                            fontSynthesis = FontSynthesis.None,
+                            color = palette.text,
+                            textAlign = TextAlign.Center,
+                        ),
+                        autoSize = TextAutoSize.StepBased(minFontSize = 30.sp, maxFontSize = 104.sp, stepSize = 2.sp),
+                        maxLines = 3,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
+                // Other names for the same thing (Enen no Shouboutai under Fire Force), small and quiet
+                if (entry.aliases.isNotEmpty()) {
+                    Spacer(Modifier.height(6.dp))
+                    BasicText(
+                        text = entry.aliases.joinToString(" · "),
+                        style = TextStyle(
+                            fontFamily = LocalFontFamily.current,
+                            fontWeight = FontWeight.SemiBold,
+                            fontSynthesis = FontSynthesis.None,
+                            color = palette.textMuted,
+                            textAlign = TextAlign.Center,
+                            fontSize = 22.sp,
+                        ),
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
             }
         }
     }

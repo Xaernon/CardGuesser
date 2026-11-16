@@ -6,6 +6,12 @@
       "runtimeExecutable": "python",
       "runtimeArgs": ["-m", "http.server", "8765", "--directory", "CardGuesser/shared/build/dist/wasmJs/productionExecutable"],
       "port": 8765
+    },
+    {
+      "name": "studio",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-u", "studio/server.py"],
+      "port": 8790
     }
   ]
 }

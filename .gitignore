@@ -33,3 +33,6 @@ google-services.json
 
 # Android Profiling
 *.hprof
+
+# CardGuesser Studio (local word tool, not published)
+/studio/

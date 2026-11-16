@@ -19,6 +19,8 @@ data class Category(
     val icon: String = "",
     /** Card colour as `#RRGGBB`. */
     val color: String = "",
+    /** Id of the parent category for a sub-category (e.g. "anime" for Shōnen), empty for top level. */
+    val parent: String = "",
     val entries: List<WordEntry> = emptyList(),
 )
 
@@ -26,6 +28,10 @@ data class Category(
 data class WordEntry(
     val name: String,
     val imageUrl: String? = null,
+    /** "easy", "medium", "hard", or empty when not rated. Set in CardGuesser Studio. */
+    val difficulty: String = "",
+    /** Other names for the same thing, shown small under the main one (e.g. "Enen no Shouboutai" for Fire Force). */
+    val aliases: List<String> = emptyList(),
 ) {
     /** The image URL, or null when the entry has none. */
     val image: String? get() = imageUrl?.trim()?.takeIf { it.isNotEmpty() }
