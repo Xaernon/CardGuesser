@@ -32,6 +32,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontSynthesis
@@ -222,8 +223,9 @@ private fun WordDisplay(entry: WordEntry, showImage: Boolean, modifier: Modifier
             ) {
                 if (image != null && !imageFailed) {
                     Box(Modifier.width(slotWidth).fillMaxHeight(), contentAlignment = Alignment.Center) {
-                        // largest frame of the picture's shape that fits the slot (3:4 until it has loaded)
-                        val ratio = (aspect ?: 0.75f).coerceIn(0.5f, 2f)
+                        // largest frame of the picture's shape that fits the slot (3:4 until it has loaded).
+                        // Any shape is allowed, even a 1:3 strip, so nothing gets cut off.
+                        val ratio = (aspect ?: 0.75f).coerceIn(0.1f, 10f)
                         val frameHeight = minOf(slotHeight, slotWidth / ratio)
                         RemoteImage(
                             url = image,
@@ -232,6 +234,7 @@ private fun WordDisplay(entry: WordEntry, showImage: Boolean, modifier: Modifier
                                 .size(width = frameHeight * ratio, height = frameHeight)
                                 .clip(RoundedCornerShape(24.dp))
                                 .background(palette.surface),
+                            contentScale = ContentScale.Fit,  // never crop, even if the frame is off by a pixel
                             onFailed = { imageFailed = true },
                             onAspectRatio = { aspect = it },
                         )

@@ -14,32 +14,66 @@ import kotlin.test.assertNull
 class GameLogicTest {
     private val words = listOf("a", "b", "c").map { WordEntry(it) }
 
+    /** Holds the phone at [z] for a few readings (a real tilt), returning the event it produced, if any. */
+    private fun TiltDetector.hold(z: Float, readings: Int = 4): Tilt? =
+        (1..readings).firstNotNullOfOrNull { onReading(z) }
+
     @Test
     fun tiltNeedsNeutralBeforeFirstEvent() {
         val detector = TiltDetector()
         // Phone lying face up on a table when the round starts must not count as a pass.
-        assertNull(detector.onReading(1f))
-        assertNull(detector.onReading(0f))
-        assertEquals(Tilt.Up, detector.onReading(0.9f))
+        assertNull(detector.hold(1f))
+        assertNull(detector.hold(0f))
+        assertEquals(Tilt.Up, detector.hold(0.95f))
     }
 
     @Test
     fun tiltFiresOncePerGesture() {
         val detector = TiltDetector()
-        detector.onReading(0f)
-        assertEquals(Tilt.Down, detector.onReading(-0.8f))
-        assertNull(detector.onReading(-0.9f))
-        assertNull(detector.onReading(-0.5f))
-        assertNull(detector.onReading(0.1f))
-        assertEquals(Tilt.Down, detector.onReading(-0.7f))
+        detector.hold(0f)
+        assertEquals(Tilt.Down, detector.hold(-0.8f))
+        assertNull(detector.hold(-0.9f))
+        assertNull(detector.hold(-0.5f))
+        assertNull(detector.hold(0.1f))
+        assertEquals(Tilt.Down, detector.hold(-0.7f))
     }
 
     @Test
     fun smallTiltsAreIgnored() {
         val detector = TiltDetector()
-        detector.onReading(0f)
-        assertNull(detector.onReading(0.5f))
-        assertNull(detector.onReading(-0.5f))
+        detector.hold(0f)
+        assertNull(detector.hold(0.4f))   // 24 degrees up
+        assertNull(detector.hold(-0.4f))  // 24 degrees down
+    }
+
+    @Test
+    fun aQuickJoltIsIgnored() {
+        val detector = TiltDetector()
+        detector.hold(0f)
+        assertNull(detector.onReading(0.97f))  // one reading of a head jerk
+        assertNull(detector.onReading(0f))
+        assertNull(detector.hold(0f))
+    }
+
+    @Test
+    fun upNeedsABitMoreThanDown() {
+        val detector = TiltDetector()
+        detector.hold(0f)
+        assertNull(detector.hold(0.55f))                // 33 degrees up: not yet a pass
+        detector.hold(0f)
+        assertEquals(Tilt.Down, detector.hold(-0.55f))  // 33 degrees down: guessed
+    }
+
+    @Test
+    fun learnsHowThePlayerHoldsThePhone() {
+        val detector = TiltDetector()
+        // Phone held leaning back by ~15 degrees for a while (z = sin 15 = 0.26)
+        repeat(200) { detector.onReading(0.26f) }
+        // A small head movement backwards from there is no longer a pass...
+        assertNull(detector.hold(0.7f))                 // 44 degrees: only ~29 past their upright
+        detector.hold(0.26f)
+        // ...while tipping forward 30 degrees from their upright still counts as guessed.
+        assertEquals(Tilt.Down, detector.hold(-0.3f))   // -17 degrees: 32 below their upright
     }
 
     @Test
