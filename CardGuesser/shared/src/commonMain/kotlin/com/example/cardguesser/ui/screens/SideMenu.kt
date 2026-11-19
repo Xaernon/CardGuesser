@@ -1,5 +1,21 @@
 package com.example.cardguesser.ui.screens
 
+import cardguesser.shared.generated.resources.theme_graphite
+import cardguesser.shared.generated.resources.theme_sunset
+import cardguesser.shared.generated.resources.theme_matcha
+import cardguesser.shared.generated.resources.theme_mocha
+import cardguesser.shared.generated.resources.theme_wine
+import cardguesser.shared.generated.resources.theme_berry
+import cardguesser.shared.generated.resources.theme_ember
+import cardguesser.shared.generated.resources.theme_forest
+import com.example.cardguesser.ui.theme.Palette
+import cardguesser.shared.generated.resources.theme_lavender
+import cardguesser.shared.generated.resources.theme_lime
+import cardguesser.shared.generated.resources.theme_coral
+import cardguesser.shared.generated.resources.theme_sky
+import cardguesser.shared.generated.resources.theme_grape
+import cardguesser.shared.generated.resources.theme_lagoon
+import cardguesser.shared.generated.resources.theme_midnight
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -112,7 +128,7 @@ fun SideMenu(open: Boolean, settings: AppSettings, onClose: () -> Unit) {
                                 Spacer(Modifier.width(8.dp))
                                 Box(Modifier.size(18.dp).clip(CircleShape).background(option.surfaceHigh))
                                 Spacer(Modifier.width(12.dp))
-                                AppText(option.name, size = 16.sp, weight = FontWeight.Bold, color = option.text)
+                                AppText(themeName(option), size = 16.sp, weight = FontWeight.Bold, color = option.text)
                             }
                         }
                     }
@@ -169,4 +185,25 @@ fun SideMenu(open: Boolean, settings: AppSettings, onClose: () -> Unit) {
             }
         }
     }
+}
+
+/** The theme's name in the game's language (falls back to its English name). */
+@Composable
+private fun themeName(palette: Palette): String = when (palette.id) {
+    "midnight" -> stringResource(Res.string.theme_midnight)
+    "lagoon" -> stringResource(Res.string.theme_lagoon)
+    "grape" -> stringResource(Res.string.theme_grape)
+    "sky" -> stringResource(Res.string.theme_sky)
+    "coral" -> stringResource(Res.string.theme_coral)
+    "lime" -> stringResource(Res.string.theme_lime)
+    "lavender" -> stringResource(Res.string.theme_lavender)
+    "forest" -> stringResource(Res.string.theme_forest)
+    "ember" -> stringResource(Res.string.theme_ember)
+    "berry" -> stringResource(Res.string.theme_berry)
+    "wine" -> stringResource(Res.string.theme_wine)
+    "mocha" -> stringResource(Res.string.theme_mocha)
+    "matcha" -> stringResource(Res.string.theme_matcha)
+    "sunset" -> stringResource(Res.string.theme_sunset)
+    "graphite" -> stringResource(Res.string.theme_graphite)
+    else -> palette.name
 }

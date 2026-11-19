@@ -12,8 +12,8 @@ import cardguesser.shared.generated.resources.nunito
 import org.jetbrains.compose.resources.Font
 
 /**
- * Colours of one theme. Every theme keeps a dark blue [background] so white words stay readable;
- * themes differ in the shade of blue and in the accent.
+ * Colours of one theme. Every theme keeps a dark [background] so white words stay readable;
+ * themes differ in the background's hue (blues, greens, warm browns, plums…) and in the accent.
  */
 data class Palette(
     val id: String,
@@ -102,7 +102,92 @@ object Palettes {
         textMuted = Color(0xFF9796C8),
     )
 
-    val all = listOf(Midnight, Lagoon, Grape, Sky, Coral, Lime, Lavender)
+    // Not blue: warm, green and neutral themes
+    val Forest = Palette(
+        id = "forest",
+        name = "Forest",
+        background = Color(0xFF0F2A22),
+        surface = Color(0xFF1A3D32),
+        surfaceHigh = Color(0xFF255243),
+        accent = Color(0xFFF2C14E),
+        onAccent = Color(0xFF10261E),
+        textMuted = Color(0xFF8FB3A4),
+    )
+    val Ember = Palette(
+        id = "ember",
+        name = "Ember",
+        background = Color(0xFF241713),
+        surface = Color(0xFF382520),
+        surfaceHigh = Color(0xFF4B3129),
+        accent = Color(0xFFFF8A4C),
+        onAccent = Color(0xFF2A1710),
+        textMuted = Color(0xFFB59C90),
+    )
+    val Berry = Palette(
+        id = "berry",
+        name = "Berry",
+        background = Color(0xFF2A1230),
+        surface = Color(0xFF3E1D47),
+        surfaceHigh = Color(0xFF53295F),
+        accent = Color(0xFFFF7EB6),
+        onAccent = Color(0xFF2A1230),
+        textMuted = Color(0xFFB89BC1),
+    )
+    val Wine = Palette(
+        id = "wine",
+        name = "Wine",
+        background = Color(0xFF2B0F17),
+        surface = Color(0xFF411B26),
+        surfaceHigh = Color(0xFF572635),
+        accent = Color(0xFFF7B48C),
+        onAccent = Color(0xFF2B1218),
+        textMuted = Color(0xFFC19CA6),
+    )
+    val Mocha = Palette(
+        id = "mocha",
+        name = "Mocha",
+        background = Color(0xFF1E1916),
+        surface = Color(0xFF2F2823),
+        surfaceHigh = Color(0xFF403730),
+        accent = Color(0xFFE8A85C),
+        onAccent = Color(0xFF231A12),
+        textMuted = Color(0xFFAB9D90),
+    )
+    val Matcha = Palette(
+        id = "matcha",
+        name = "Matcha",
+        background = Color(0xFF1C2316),
+        surface = Color(0xFF2B3522),
+        surfaceHigh = Color(0xFF3A472E),
+        accent = Color(0xFFB8E07A),
+        onAccent = Color(0xFF1A2312),
+        textMuted = Color(0xFFA2AD8E),
+    )
+    val Sunset = Palette(
+        id = "sunset",
+        name = "Sunset",
+        background = Color(0xFF2A1A2E),
+        surface = Color(0xFF3E2742),
+        surfaceHigh = Color(0xFF533457),
+        accent = Color(0xFFFFA552),
+        onAccent = Color(0xFF2A1A20),
+        textMuted = Color(0xFFB9A0BC),
+    )
+    val Graphite = Palette(
+        id = "graphite",
+        name = "Graphite",
+        background = Color(0xFF17181C),
+        surface = Color(0xFF24262C),
+        surfaceHigh = Color(0xFF33363E),
+        accent = Color(0xFFFFD166),
+        onAccent = Color(0xFF1A1A1E),
+        textMuted = Color(0xFF9C9FA8),
+    )
+
+    val all = listOf(
+        Midnight, Lagoon, Grape, Sky, Coral, Lime, Lavender,
+        Forest, Ember, Berry, Wine, Mocha, Matcha, Sunset, Graphite,
+    )
     val default = Midnight
 
     fun byId(id: String): Palette = all.firstOrNull { it.id == id } ?: default

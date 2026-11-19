@@ -154,6 +154,20 @@ actual fun EmojiIcon(emoji: String, size: Dp, modifier: Modifier) {
     AppText(emoji, modifier = modifier, size = size.value.sp)
 }
 
+private var chosenLocale: java.util.Locale? = null
+
 actual fun applyAppLanguage(code: String) {
-    java.util.Locale.setDefault(java.util.Locale.forLanguageTag(code))
+    chosenLocale = java.util.Locale.forLanguageTag(code)
+    reapplyAppLanguage()
+}
+
+/**
+ * Android resets the default language to the phone's on every configuration change (rotating into a
+ * round, for one), which turned the texts back to English. MainActivity calls this from
+ * onConfigurationChanged, before the screens are told about the change, so they keep the game's language.
+ */
+fun reapplyAppLanguage() {
+    val locale = chosenLocale ?: return
+    java.util.Locale.setDefault(locale)
+    android.os.LocaleList.setDefault(android.os.LocaleList(locale))
 }

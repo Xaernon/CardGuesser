@@ -33,4 +33,19 @@
     <string name="setting_language">Langue</string>
     <string name="language_coming_soon">%1$s (bientôt)</string>
     <string name="end_round">Terminer la manche</string>
+    <string name="theme_midnight">Minuit</string>
+    <string name="theme_lagoon">Lagon</string>
+    <string name="theme_grape">Raisin</string>
+    <string name="theme_sky">Ciel</string>
+    <string name="theme_coral">Corail</string>
+    <string name="theme_lime">Citron vert</string>
+    <string name="theme_lavender">Lavande</string>
+    <string name="theme_forest">Forêt</string>
+    <string name="theme_ember">Braise</string>
+    <string name="theme_berry">Mûre</string>
+    <string name="theme_wine">Bordeaux</string>
+    <string name="theme_mocha">Moka</string>
+    <string name="theme_matcha">Matcha</string>
+    <string name="theme_sunset">Crépuscule</string>
+    <string name="theme_graphite">Graphite</string>
 </resources>

@@ -5,6 +5,26 @@
 (function () {
     var started = false;
     window.__cardGuesserStarted = function () { started = true; };
+    // These messages show before the game (and its texts) load: pick French from the saved choice
+    // or the browser's language.
+    var saved = null;
+    try { saved = localStorage.getItem('cardguesser.language'); } catch (e) { /* private mode */ }
+    var fr = (saved || navigator.language || '').indexOf('fr') === 0;
+    var text = fr ? {
+        failed: 'Le jeu n’a pas pu démarrer dans ce navigateur.',
+        update: 'Mettre à jour le navigateur (ou iOS) règle généralement le problème.',
+        slowTitle: 'Chargement en cours…',
+        slow: 'La première visite télécharge environ 10 Mo. Avec une connexion lente, cela peut prendre une minute.'
+    } : {
+        failed: "The game couldn't start in this browser.",
+        update: 'Updating the browser (or iOS) usually fixes this.',
+        slowTitle: 'Still loading…',
+        slow: 'The first visit downloads about 10 MB. On a slow connection this can take a minute.'
+    };
+    document.addEventListener('DOMContentLoaded', function () {
+        var el = document.getElementById('loading');
+        if (el && fr && !started && el.textContent === 'Loading…') el.textContent = 'Chargement…';
+    });
     function show(title, detail) {
         if (started) return;
         var el = document.getElementById('loading');
@@ -14,31 +34,40 @@
         if (detail) { var d = document.createElement('small'); d.textContent = detail; el.appendChild(d); }
     }
     window.addEventListener('error', function (e) {
-        show("The game couldn't start in this browser.",
-             (e && e.message ? e.message + ' — ' : '') + 'Updating the browser (or iOS) usually fixes this.');
+        show(text.failed, (e && e.message ? e.message + ' — ' : '') + text.update);
     });
     window.addEventListener('unhandledrejection', function (e) {
         var r = e && e.reason;
-        show("The game couldn't start in this browser.",
-             (r && (r.message || String(r)) || '') + ' — Updating the browser (or iOS) usually fixes this.');
+        show(text.failed, (r && (r.message || String(r)) ? (r.message || String(r)) + ' — ' : '') + text.update);
     });
     setTimeout(function () {
-        show('Still loading…', 'The first visit downloads about 10 MB. On a slow connection this can take a minute.');
+        show(text.slowTitle, text.slow);
     }, 20000);
 })();
 (function () {
     // Compose reads the browser's language list to pick the texts; let the game override it.
+    // Some browsers (Safari) keep these on the navigator object itself, others on its prototype,
+    // so both are covered; the original value is used until a language is chosen in the game.
     ['languages', 'language'].forEach(function (prop) {
-        var original = Object.getOwnPropertyDescriptor(Navigator.prototype, prop);
-        if (!original || !original.get) return;
-        Object.defineProperty(Navigator.prototype, prop, {
+        var proto = Object.getOwnPropertyDescriptor(Navigator.prototype, prop);
+        var own = Object.getOwnPropertyDescriptor(navigator, prop);
+        var fallback = navigator[prop];
+        function original(self) {
+            if (own && own.get) return own.get.call(self);
+            if (own && 'value' in own) return own.value;
+            if (proto && proto.get) return proto.get.call(self);
+            return fallback;
+        }
+        var override = {
             configurable: true,
             get: function () {
                 var code = window.__cardGuesserLanguage;
-                if (!code) return original.get.call(this);
+                if (!code) return original(this);
                 return prop === 'languages' ? [code] : code;
             }
-        });
+        };
+        try { Object.defineProperty(Navigator.prototype, prop, override); } catch (e) { /* not configurable */ }
+        try { Object.defineProperty(navigator, prop, override); } catch (e) { /* not configurable */ }
     });
 })();
 
