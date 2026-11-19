@@ -29,6 +29,17 @@ kotlin {
         }
         binaries.executable()
     }
+    // Plain-JavaScript build of the same app: older browsers (Safari before iOS 18.2, which lack the
+    // WebAssembly features Kotlin/Wasm needs) load this one instead. See composeCompatibilityBrowserDistribution.
+    js {
+        outputModuleName = "cardguesser"
+        browser {
+            commonWebpackConfig {
+                outputFileName = "cardguesser.js"
+            }
+        }
+        binaries.executable()
+    }
     android {
        namespace = "com.example.cardguesser.shared"
        compileSdk = libs.versions.android.compileSdk.get().toInt()
@@ -56,7 +67,8 @@ kotlin {
             implementation(libs.androidx.core.ktx)
             implementation(libs.ktor.client.okhttp)
         }
-        wasmJsMain.dependencies {
+        // shared by the wasmJs and js (fallback) web builds
+        webMain.dependencies {
             implementation(libs.ktor.client.js)
             implementation(libs.kotlinx.browser)
         }

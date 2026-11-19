@@ -1,5 +1,6 @@
 package com.example.cardguesser.ui.screens
 
+import com.example.cardguesser.ui.components.LocalCompactHeight
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -80,12 +81,13 @@ fun ResultsScreen(
 
     PlatformBackHandler(enabled = preview != null) { preview = null }
 
+    val compact = LocalCompactHeight.current
     Box(Modifier.fillMaxSize()) {
         Column(Modifier.fillMaxSize().safeDrawingPadding().padding(horizontal = 20.dp)) {
-            Spacer(Modifier.height(24.dp))
+            Spacer(Modifier.height(if (compact) 8.dp else 24.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Column(Modifier.weight(1f)) {
-                    AppText(stringResource(Res.string.results_title), size = 34.sp, weight = FontWeight.Bold)
+                    AppText(stringResource(Res.string.results_title), size = if (compact) 24.sp else 34.sp, weight = FontWeight.Bold)
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         EmojiIcon(category.icon, 15.dp)
                         Spacer(Modifier.width(8.dp))
@@ -100,21 +102,22 @@ fun ResultsScreen(
                 ) {
                     AppText(
                         stringResource(Res.string.results_score, results.count { it.guessed }, results.size),
-                        size = 30.sp,
+                        size = if (compact) 22.sp else 30.sp,
                         weight = FontWeight.Bold,
                         color = palette.accent,
                         maxLines = 1,
                     )
                 }
             }
-            Spacer(Modifier.height(10.dp))
+            Spacer(Modifier.height(if (compact) 4.dp else 10.dp))
             AppText(
                 stringResource(Res.string.results_hint),
-                size = 13.sp,
+                size = if (compact) 12.sp else 13.sp,
                 weight = FontWeight.Medium,
                 color = palette.textMuted,
+                maxLines = if (compact) 1 else Int.MAX_VALUE,
             )
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(if (compact) 6.dp else 12.dp))
 
             if (results.isEmpty()) {
                 Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
@@ -137,7 +140,7 @@ fun ResultsScreen(
             }
 
             Row(
-                Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 16.dp),
+                Modifier.fillMaxWidth().padding(top = if (compact) 6.dp else 8.dp, bottom = if (compact) 8.dp else 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 PillButton(
@@ -146,13 +149,13 @@ fun ResultsScreen(
                     modifier = Modifier.weight(1f),
                     background = palette.surface,
                     textColor = palette.text,
-                    padding = PaddingValues(horizontal = 12.dp, vertical = 16.dp),
+                    padding = PaddingValues(horizontal = 12.dp, vertical = if (compact) 10.dp else 16.dp),
                 )
                 PillButton(
                     stringResource(Res.string.play_again),
                     onClick = onPlayAgain,
                     modifier = Modifier.weight(1f),
-                    padding = PaddingValues(horizontal = 12.dp, vertical = 16.dp),
+                    padding = PaddingValues(horizontal = 12.dp, vertical = if (compact) 10.dp else 16.dp),
                 )
             }
         }

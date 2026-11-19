@@ -9,7 +9,7 @@ package com.example.cardguesser.data
  */
 enum class AppLanguage(val code: String, val label: String, val available: Boolean) {
     English("en", "English", available = true),
-    French("fr", "Français", available = false),
+    French("fr", "Français", available = true),
     Spanish("es", "Español", available = false);
 
     companion object {
@@ -17,5 +17,8 @@ enum class AppLanguage(val code: String, val label: String, val available: Boole
 
         fun byCode(code: String): AppLanguage =
             entries.firstOrNull { it.code == code && it.available } ?: default
+
+        /** The phone's language if the game has it, else English. Used on first launch. */
+        fun fromDevice(): AppLanguage = byCode(androidx.compose.ui.text.intl.Locale.current.language)
     }
 }

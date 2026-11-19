@@ -153,3 +153,7 @@ actual fun PlatformBackHandler(enabled: Boolean, onBack: () -> Unit) {
 actual fun EmojiIcon(emoji: String, size: Dp, modifier: Modifier) {
     AppText(emoji, modifier = modifier, size = size.value.sp)
 }
+
+actual fun applyAppLanguage(code: String) {
+    java.util.Locale.setDefault(java.util.Locale.forLanguageTag(code))
+}

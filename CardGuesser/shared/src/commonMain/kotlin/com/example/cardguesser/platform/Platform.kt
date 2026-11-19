@@ -53,3 +53,10 @@ expect fun PlatformBackHandler(enabled: Boolean, onBack: () -> Unit)
  */
 @Composable
 expect fun EmojiIcon(emoji: String, size: Dp, modifier: Modifier = Modifier)
+
+/**
+ * Makes the app's own texts (menus, buttons) follow the language picked in the side menu instead of
+ * the phone's language. Compose resources read the platform locale, so this sets it; App() then
+ * rebuilds its screens with key(language) so every text is reloaded.
+ */
+expect fun applyAppLanguage(code: String)

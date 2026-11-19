@@ -1,0 +1,36 @@
+<resources>
+    <string name="app_name">CardGuesser</string>
+    <string name="categories_subtitle">Choisis une catégorie pour commencer</string>
+    <string name="words_count">%1$d mots</string>
+    <string name="back">Retour</string>
+    <string name="round_time">Durée de la manche</string>
+    <string name="decrease_time">Moins de temps</string>
+    <string name="increase_time">Plus de temps</string>
+    <string name="start">C’est parti</string>
+    <string name="settings">Réglages</string>
+    <string name="close">OK</string>
+    <string name="setting_images">Images</string>
+    <string name="setting_images_description">Affiche une image à côté de chaque mot : les joueurs qui font deviner ont un rappel visuel pour aider celui qui tient le téléphone. Nécessite une connexion internet.</string>
+    <string name="setting_theme">Thème</string>
+    <string name="setting_font">Police (dev)</string>
+    <string name="forehead_prompt">Mets ton téléphone sur ton front !</string>
+    <string name="tilt_hint">Vers le bas = trouvé  ·  Vers le haut = passer</string>
+    <string name="correct">Trouvé !</string>
+    <string name="pass">Passé</string>
+    <string name="time_up">Temps écoulé !</string>
+    <string name="results_title">Résultats</string>
+    <string name="results_score">%1$d / %2$d</string>
+    <string name="results_hint">Touche un mot pour voir son image. Touche son symbole pour corriger une erreur.</string>
+    <string name="results_empty">Aucun mot cette manche.</string>
+    <string name="play_again">Rejouer</string>
+    <string name="change_category">Catégories</string>
+    <string name="no_image">Pas encore d’image pour celui-ci</string>
+    <string name="image_failed">Impossible de charger l’image</string>
+    <string name="mark_guessed">Marquer comme trouvé</string>
+    <string name="mark_failed">Marquer comme raté</string>
+    <string name="menu">Menu</string>
+    <string name="open_menu">Ouvrir le menu</string>
+    <string name="setting_language">Langue</string>
+    <string name="language_coming_soon">%1$s (bientôt)</string>
+    <string name="end_round">Terminer la manche</string>
+</resources>

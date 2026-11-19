@@ -30,10 +30,11 @@ jobs:
         working-directory: CardGuesser
         run: |
           chmod +x gradlew
-          ./gradlew :shared:wasmJsBrowserDistribution --no-configuration-cache
+          # Wasm build plus a plain-JavaScript fallback for older browsers (e.g. Safari before iOS 18.2)
+          ./gradlew :shared:composeCompatibilityBrowserDistribution --no-configuration-cache
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: CardGuesser/shared/build/dist/wasmJs/productionExecutable
+          path: CardGuesser/shared/build/dist/composeWebCompatibility/productionExecutable
 
   deploy:
     needs: build

@@ -96,3 +96,7 @@ actual fun PlatformBackHandler(enabled: Boolean, onBack: () -> Unit) {
 actual fun EmojiIcon(emoji: String, size: Dp, modifier: Modifier) {
     AppText(emoji, modifier = modifier, size = size.value.sp)
 }
+
+actual fun applyAppLanguage(code: String) {
+    platform.Foundation.NSUserDefaults.standardUserDefaults.setObject(listOf(code), forKey = "AppleLanguages")
+}

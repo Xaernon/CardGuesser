@@ -17,6 +17,7 @@ import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -228,3 +229,13 @@ fun formatTime(totalSeconds: Int): String {
     val seconds = totalSeconds.coerceAtLeast(0)
     return "${seconds / 60}:${(seconds % 60).toString().padStart(2, '0')}"
 }
+
+/**
+ * True on short screens, like a phone held sideways in a browser (Safari's bars leave ~320 dp).
+ * Screens switch to tighter layouts so nothing is cut off. Set once in App().
+ */
+val LocalCompactHeight = compositionLocalOf { false }
+
+/** Below this height a screen counts as short. */
+val CompactHeightThreshold = 500.dp
+

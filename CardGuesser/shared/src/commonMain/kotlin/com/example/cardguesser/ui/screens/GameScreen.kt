@@ -1,5 +1,9 @@
 package com.example.cardguesser.ui.screens
 
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -259,17 +263,19 @@ private fun WordText(entry: WordEntry, modifier: Modifier) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Box(Modifier.weight(1f, fill = false), contentAlignment = Alignment.Center) {
+        BoxWithConstraints(Modifier.weight(1f, fill = false), contentAlignment = Alignment.Center) {
+            val style = TextStyle(
+                fontFamily = LocalFontFamily.current,
+                fontWeight = FontWeight.Bold,
+                fontSynthesis = FontSynthesis.None,
+                color = palette.text,
+                textAlign = TextAlign.Center,
+            )
+            val measurer = rememberTextMeasurer()
+            val size = remember(entry.name, style, constraints) { wordFontSize(measurer, entry.name, style, constraints) }
             BasicText(
                 text = entry.name,
-                style = TextStyle(
-                    fontFamily = LocalFontFamily.current,
-                    fontWeight = FontWeight.Bold,
-                    fontSynthesis = FontSynthesis.None,
-                    color = palette.text,
-                    textAlign = TextAlign.Center,
-                ),
-                autoSize = TextAutoSize.StepBased(minFontSize = 30.sp, maxFontSize = 104.sp, stepSize = 2.sp),
+                style = style.copy(fontSize = size, lineHeight = size * 1.05f),
                 maxLines = 3,
                 overflow = TextOverflow.Ellipsis,
             )
@@ -293,3 +299,24 @@ private fun WordText(entry: WordEntry, modifier: Modifier) {
         }
     }
 }
+
+/**
+ * The biggest size (104 down to 30 sp) at which the word fits its space without breaking a word in two:
+ * every single word must fit on one line ("Undertale" must never become "Under-" / "tale" or "Under…"),
+ * and the whole name must fit in at most three lines.
+ */
+private fun wordFontSize(measurer: TextMeasurer, text: String, style: TextStyle, space: Constraints): TextUnit {
+    val words = text.split(' ', '\n').filter { it.isNotBlank() }.ifEmpty { listOf(text) }
+    var sp = 104
+    while (sp > 30) {
+        val sized = style.copy(fontSize = sp.sp, lineHeight = (sp * 1.05f).sp)
+        val widest = words.maxOf { measurer.measure(it, sized, maxLines = 1, softWrap = false).size.width }
+        if (widest <= space.maxWidth) {
+            val all = measurer.measure(text, sized, maxLines = 3, constraints = Constraints(maxWidth = space.maxWidth))
+            if (!all.hasVisualOverflow && (!space.hasBoundedHeight || all.size.height <= space.maxHeight)) return sp.sp
+        }
+        sp -= 2
+    }
+    return 30.sp
+}
+

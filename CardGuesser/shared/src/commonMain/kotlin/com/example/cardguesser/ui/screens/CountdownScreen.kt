@@ -1,5 +1,6 @@
 package com.example.cardguesser.ui.screens
 
+import com.example.cardguesser.ui.components.LocalCompactHeight
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
@@ -51,16 +52,18 @@ fun CountdownScreen(onFinished: () -> Unit) {
         finish()
     }
 
+    val compact = LocalCompactHeight.current
     Column(
-        Modifier.fillMaxSize().safeDrawingPadding().padding(24.dp),
+        Modifier.fillMaxSize().safeDrawingPadding().padding(if (compact) 12.dp else 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
         AppText(
             stringResource(Res.string.forehead_prompt),
-            size = 34.sp,
+            size = if (compact) 26.sp else 34.sp,
             weight = FontWeight.Bold,
             align = TextAlign.Center,
+            maxLines = 2,
         )
         AppText(
             count.coerceAtLeast(1).toString(),
@@ -68,10 +71,10 @@ fun CountdownScreen(onFinished: () -> Unit) {
                 scaleX = scale.value
                 scaleY = scale.value
             },
-            size = 110.sp,
+            size = if (compact) 84.sp else 110.sp,
             weight = FontWeight.Bold,
             color = palette.accent,
         )
-        AppText(stringResource(Res.string.tilt_hint), size = 17.sp, color = palette.textMuted, align = TextAlign.Center)
+        AppText(stringResource(Res.string.tilt_hint), size = if (compact) 14.sp else 17.sp, color = palette.textMuted, align = TextAlign.Center)
     }
 }

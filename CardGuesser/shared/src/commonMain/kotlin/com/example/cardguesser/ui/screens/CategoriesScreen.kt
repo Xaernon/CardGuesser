@@ -1,5 +1,8 @@
 package com.example.cardguesser.ui.screens
 
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.Row
+import com.example.cardguesser.ui.components.LocalCompactHeight
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -54,23 +57,40 @@ fun CategoriesScreen(categories: List<Category>, settings: AppSettings, onSelect
 
     PlatformBackHandler(enabled = menuOpen) { menuOpen = false }
 
+    val compact = LocalCompactHeight.current
     Box(Modifier.fillMaxSize()) {
         Column(Modifier.fillMaxSize().safeDrawingPadding().padding(horizontal = 20.dp)) {
-            Spacer(Modifier.height(12.dp))
-            CircleButton(
-                Glyph.Menu,
-                stringResource(Res.string.open_menu),
-                onClick = { menuOpen = true },
-                size = 48.dp,
-                background = palette.surface,
-            )
-            Spacer(Modifier.height(16.dp))
-            AppText(stringResource(Res.string.app_name), size = 36.sp, weight = FontWeight.Bold)
-            Spacer(Modifier.height(2.dp))
-            AppText(stringResource(Res.string.categories_subtitle), size = 17.sp, color = palette.textMuted)
-            Spacer(Modifier.height(20.dp))
+            Spacer(Modifier.height(if (compact) 8.dp else 12.dp))
+            val menuButton = @Composable {
+                CircleButton(
+                    Glyph.Menu,
+                    stringResource(Res.string.open_menu),
+                    onClick = { menuOpen = true },
+                    size = if (compact) 42.dp else 48.dp,
+                    background = palette.surface,
+                )
+            }
+            if (compact) {
+                // Sideways: one line of header so the cards get the height
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    menuButton()
+                    Spacer(Modifier.width(14.dp))
+                    AppText(stringResource(Res.string.app_name), size = 24.sp, weight = FontWeight.Bold, maxLines = 1)
+                    Spacer(Modifier.width(12.dp))
+                    AppText(stringResource(Res.string.categories_subtitle), size = 14.sp, color = palette.textMuted, maxLines = 1)
+                }
+                Spacer(Modifier.height(10.dp))
+            } else {
+                menuButton()
+                Spacer(Modifier.height(16.dp))
+                AppText(stringResource(Res.string.app_name), size = 36.sp, weight = FontWeight.Bold)
+                Spacer(Modifier.height(2.dp))
+                AppText(stringResource(Res.string.categories_subtitle), size = 17.sp, color = palette.textMuted)
+                Spacer(Modifier.height(20.dp))
+            }
             LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
+                // as many ~150 dp columns as fit: 2 on a phone upright, 4 or 5 sideways
+                columns = GridCells.Adaptive(150.dp),
                 modifier = Modifier.fillMaxSize(),
                 horizontalArrangement = Arrangement.spacedBy(14.dp),
                 verticalArrangement = Arrangement.spacedBy(14.dp),
@@ -89,23 +109,24 @@ fun CategoriesScreen(categories: List<Category>, settings: AppSettings, onSelect
 @Composable
 private fun CategoryCard(category: Category, onClick: () -> Unit) {
     val color = parseHexColor(category.color, LocalPalette.current.surfaceHigh)
+    val compact = LocalCompactHeight.current  // sideways phone: shorter cards so a whole row fits
     Column(
         Modifier
             .fillMaxWidth()
-            .aspectRatio(0.76f)
+            .aspectRatio(if (compact) 1.1f else 0.76f)
             .clip(RoundedCornerShape(30.dp))
             .background(color)
             .pressable(onClick = onClick)
-            .padding(16.dp),
+            .padding(if (compact) 14.dp else 16.dp),
     ) {
         Box(
-            Modifier.size(54.dp).clip(CircleShape).background(Color.White.copy(alpha = 0.22f)),
+            Modifier.size(if (compact) 40.dp else 54.dp).clip(CircleShape).background(Color.White.copy(alpha = 0.22f)),
             contentAlignment = Alignment.Center,
         ) {
-            EmojiIcon(category.icon, 28.dp)
+            EmojiIcon(category.icon, if (compact) 21.dp else 28.dp)
         }
         Spacer(Modifier.weight(1f))
-        AppText(category.name, size = 21.sp, weight = FontWeight.Bold, maxLines = 2, lineHeight = 24.sp)
+        AppText(category.name, size = if (compact) 18.sp else 21.sp, weight = FontWeight.Bold, maxLines = 2, lineHeight = if (compact) 21.sp else 24.sp)
         if (category.description.isNotBlank()) {
             Spacer(Modifier.height(2.dp))
             AppText(
@@ -113,7 +134,7 @@ private fun CategoryCard(category: Category, onClick: () -> Unit) {
                 size = 14.sp,
                 weight = FontWeight.Medium,
                 color = Color.White.copy(alpha = 0.85f),
-                maxLines = 2,
+                maxLines = if (compact) 1 else 2,
                 lineHeight = 18.sp,
             )
         }

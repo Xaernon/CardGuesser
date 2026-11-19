@@ -26,10 +26,13 @@ private fun jsGetItem(key: String): String? = js("window.cardGuesser.getItem(key
 private fun jsEmojiPng(emoji: String, pixels: Int): String = js("window.cardGuesser.emojiPng(emoji, pixels)")
 private fun jsSetItem(key: String, value: String): Unit = js("window.cardGuesser.setItem(key, value)")
 
+private fun jsFullscreen(on: Boolean): Unit = js("window.cardGuesser.fullscreen(on)")
+
 @Composable
 actual fun LandscapeMode(enabled: Boolean) {
-    // A web page cannot rotate the screen (iOS Safari has no orientation lock); the player
-    // turns the phone and the layout follows.
+    // Rounds go full screen and sideways where the browser allows it (Android Chrome). iPhone Safari
+    // can't do either, so the player turns the phone and the layout follows (or uses the home-screen app).
+    LaunchedEffect(enabled) { if (enabled) jsFullscreen(true) }
 }
 
 @Composable
@@ -105,3 +108,7 @@ actual fun EmojiIcon(emoji: String, size: Dp, modifier: Modifier) {
     }
     if (bitmap != null) Image(bitmap, contentDescription = null, modifier = modifier.size(size * 1.25f))
 }
+
+private fun jsSetLanguage(code: String): Unit = js("window.cardGuesser.setLanguage(code)")
+
+actual fun applyAppLanguage(code: String) = jsSetLanguage(code)

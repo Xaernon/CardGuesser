@@ -26,7 +26,7 @@ class AppSettings(private val store: SettingsStore) {
     var font by mutableStateOf(AppFont.byId(store.getString(KEY_FONT, AppFont.Nunito.id)))
         private set
 
-    var language by mutableStateOf(AppLanguage.byCode(store.getString(KEY_LANGUAGE, AppLanguage.default.code)))
+    var language by mutableStateOf(AppLanguage.byCode(store.getString(KEY_LANGUAGE, AppLanguage.fromDevice().code)))
         private set
 
     val canDecreaseDuration get() = durationSeconds > MIN_DURATION

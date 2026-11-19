@@ -1,5 +1,9 @@
 package com.example.cardguesser
 
+import com.example.cardguesser.ui.components.CompactHeightThreshold
+import com.example.cardguesser.ui.components.LocalCompactHeight
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -10,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -20,6 +25,7 @@ import com.example.cardguesser.game.WordResult
 import com.example.cardguesser.platform.KeepScreenOn
 import com.example.cardguesser.platform.LandscapeMode
 import com.example.cardguesser.platform.PlatformBackHandler
+import com.example.cardguesser.platform.applyAppLanguage
 import com.example.cardguesser.platform.rememberSettingsStore
 import com.example.cardguesser.ui.screens.CategoriesScreen
 import com.example.cardguesser.ui.screens.CountdownScreen
@@ -66,52 +72,59 @@ fun App() {
         }
     }
 
-    AppTheme(settings.palette, settings.font) {
-        Box(Modifier.fillMaxSize().background(settings.palette.background)) {
-            AnimatedContent(
-                targetState = screen,
-                transitionSpec = { fadeIn() togetherWith fadeOut() },
-            ) { current ->
-                when (current) {
-                    Screen.Categories -> CategoriesScreen(
-                        categories,
-                        settings,
-                        onSelect = { screen = Screen.Setup(it) },
-                    )
+    // Interface texts follow the chosen language: set it, then rebuild the screens so they reload.
+    val languageCode = settings.language.code
+    remember(languageCode) { applyAppLanguage(languageCode) }
+    key(languageCode) {
+        AppTheme(settings.palette, settings.font) {
+            BoxWithConstraints(Modifier.fillMaxSize().background(settings.palette.background)) {
+              CompositionLocalProvider(LocalCompactHeight provides (maxHeight < CompactHeightThreshold)) {
+                AnimatedContent(
+                    targetState = screen,
+                    transitionSpec = { fadeIn() togetherWith fadeOut() },
+                ) { current ->
+                    when (current) {
+                        Screen.Categories -> CategoriesScreen(
+                            categories,
+                            settings,
+                            onSelect = { screen = Screen.Setup(it) },
+                        )
 
-                    is Screen.Setup -> SetupScreen(
-                        current.category,
-                        settings,
-                        onBack = { screen = Screen.Categories },
-                        onStart = { screen = Screen.Countdown(current.category) },
-                    )
+                        is Screen.Setup -> SetupScreen(
+                            current.category,
+                            settings,
+                            onBack = { screen = Screen.Categories },
+                            onStart = { screen = Screen.Countdown(current.category) },
+                        )
 
-                    is Screen.Countdown -> CountdownScreen(
-                        onFinished = { screen = Screen.Game(current.category) },
-                    )
+                        is Screen.Countdown -> CountdownScreen(
+                            onFinished = { screen = Screen.Game(current.category) },
+                        )
 
-                    is Screen.Game -> GameScreen(
-                        current.category,
-                        durationSeconds = settings.durationSeconds,
-                        imagesEnabled = settings.imagesEnabled,
-                        onFinished = { screen = Screen.Results(current.category, it) },
-                        // Leaving before answering anything has no results worth showing.
-                        onExit = { results ->
-                            screen = if (results.isEmpty()) {
-                                Screen.Setup(current.category)
-                            } else {
-                                Screen.Results(current.category, results)
-                            }
-                        },
-                    )
+                        is Screen.Game -> GameScreen(
+                            current.category,
+                            durationSeconds = settings.durationSeconds,
+                            imagesEnabled = settings.imagesEnabled,
+                            onFinished = { screen = Screen.Results(current.category, it) },
+                            // Leaving before answering anything has no results worth showing.
+                            onExit = { results ->
+                                screen = if (results.isEmpty()) {
+                                    Screen.Setup(current.category)
+                                } else {
+                                    Screen.Results(current.category, results)
+                                }
+                            },
+                        )
 
-                    is Screen.Results -> ResultsScreen(
-                        current.category,
-                        current.results,
-                        onPlayAgain = { screen = Screen.Countdown(current.category) },
-                        onChangeCategory = { screen = Screen.Categories },
-                    )
+                        is Screen.Results -> ResultsScreen(
+                            current.category,
+                            current.results,
+                            onPlayAgain = { screen = Screen.Countdown(current.category) },
+                            onChangeCategory = { screen = Screen.Categories },
+                        )
+                    }
                 }
+              }
             }
         }
     }
