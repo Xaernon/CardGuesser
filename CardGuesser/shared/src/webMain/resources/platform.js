@@ -80,6 +80,11 @@ window.cardGuesser = (function () {
     var keyZ = 0;
     var audio = null;
     var motionAsked = false;
+    var motionState = 'unknown';   // iOS: 'granted' / 'denied' once asked
+    var lastMotion = 0;            // time of the last tilt reading
+    var wantMotion = false;        // a countdown or round is on screen
+    var needsPermission = typeof DeviceMotionEvent !== 'undefined' &&
+        typeof DeviceMotionEvent.requestPermission === 'function';
     var wantAwake = false;
     var wakeLock = null;
 
@@ -88,6 +93,8 @@ window.cardGuesser = (function () {
         if (!g || g.z === null || g.z === undefined) return;
         var z = g.z / 9.81;
         sensorZ = isApple ? -z : z;
+        lastMotion = Date.now();
+        hideMotionPrompt();
     });
 
     // Arrow keys stand in for tilting when there is no motion sensor (laptop demos).
@@ -106,15 +113,80 @@ window.cardGuesser = (function () {
             if (!audio) audio = new (window.AudioContext || window.webkitAudioContext)();
             if (audio.state === 'suspended') audio.resume();
         } catch (e) { /* sound is optional */ }
-        if (!motionAsked && typeof DeviceMotionEvent !== 'undefined' &&
-            typeof DeviceMotionEvent.requestPermission === 'function') {
-            motionAsked = true;
-            DeviceMotionEvent.requestPermission().catch(function () { motionAsked = false; });
-        }
     }
     ['touchend', 'pointerup', 'click', 'keydown'].forEach(function (type) {
         document.addEventListener(type, unlock, true);
     });
+
+    // iOS only sends tilt data after the player allows "Motion & Orientation", and only accepts the
+    // request from a real tap (touchend / click). Ask on the first such tap...
+    function askMotion() {
+        if (!needsPermission || motionAsked || motionState === 'granted') return;
+        motionAsked = true;
+        DeviceMotionEvent.requestPermission().then(function (state) {
+            motionState = state;
+            if (state === 'granted') hideMotionPrompt();
+            else if (wantMotion) showMotionPrompt();
+        }).catch(function () { motionAsked = false; });  // not counted as a tap: try on the next one
+    }
+    ['touchend', 'click'].forEach(function (type) {
+        document.addEventListener(type, askMotion, true);
+    });
+
+    // ...and if a countdown or round starts with no tilt data coming in, say so with a button to fix it,
+    // instead of a game that silently ignores tilting (seen in iPhone home-screen apps).
+    var prompt = null;
+    function frText() {
+        var code = window.__cardGuesserLanguage || navigator.language || '';
+        return code.indexOf('fr') === 0;
+    }
+    function showMotionPrompt() {
+        if (!needsPermission || !wantMotion) return;
+        if (!prompt) {
+            prompt = document.createElement('div');
+            prompt.style.cssText = 'position:fixed;inset:0;z-index:20;display:flex;flex-direction:column;gap:14px;' +
+                'align-items:center;justify-content:center;padding:24px;box-sizing:border-box;text-align:center;' +
+                'background:rgba(10,12,24,.88);color:#EEF1FF;font:600 17px/1.4 system-ui,-apple-system,sans-serif;';
+            document.body.appendChild(prompt);
+        }
+        var fr = frText();
+        var denied = motionState === 'denied';
+        var standalone = window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches ||
+            window.matchMedia('(display-mode: fullscreen)').matches;
+        prompt.innerHTML = '';
+        var title = document.createElement('div');
+        title.textContent = denied
+            ? (fr ? 'L’accès aux mouvements a été refusé' : 'Motion access was refused')
+            : (fr ? 'Le jeu a besoin des mouvements du téléphone pour savoir quand tu l’inclines.'
+                  : 'The game needs the phone’s motion to know when you tilt it.');
+        prompt.appendChild(title);
+        if (denied) {
+            var how = document.createElement('div');
+            how.style.cssText = 'font-weight:500;font-size:15px;max-width:440px;opacity:.85';
+            how.textContent = standalone
+                ? (fr ? 'Ferme complètement l’app (balaye-la vers le haut), rouvre-la, touche ce bouton et choisis « Autoriser ».'
+                      : 'Close the app completely (swipe it away), open it again, tap this button and choose “Allow”.')
+                : (fr ? 'Recharge la page, touche ce bouton et choisis « Autoriser ».'
+                      : 'Reload the page, tap this button and choose “Allow”.');
+            prompt.appendChild(how);
+        }
+        var button = document.createElement('button');
+        button.textContent = fr ? 'Activer les mouvements' : 'Enable motion';
+        button.style.cssText = 'border:0;border-radius:999px;padding:14px 28px;background:#FFC857;color:#1A1F3D;' +
+            'font:800 18px system-ui,-apple-system,sans-serif;';
+        button.addEventListener('click', function (e) {
+            e.stopPropagation();
+            DeviceMotionEvent.requestPermission().then(function (state) {
+                motionState = state;
+                motionAsked = true;
+                if (state === 'granted') hideMotionPrompt(); else showMotionPrompt();
+            }).catch(function () { motionState = 'denied'; showMotionPrompt(); });
+        });
+        prompt.appendChild(button);
+    }
+    function hideMotionPrompt() {
+        if (prompt) { prompt.remove(); prompt = null; }
+    }
 
     function acquireWakeLock() {
         if (!wantAwake || wakeLock || !navigator.wakeLock) return;
@@ -219,6 +291,15 @@ window.cardGuesser = (function () {
             if (document.body.style.backgroundColor === css) return;
             document.documentElement.style.backgroundColor = css;
             document.body.style.backgroundColor = css;
+        },
+        // A countdown or round is on screen (true) or not (false). On iOS, if no tilt data arrives
+        // shortly after, show the "Enable motion" button.
+        needMotion: function (on) {
+            wantMotion = on;
+            if (!on) { hideMotionPrompt(); return; }
+            setTimeout(function () {
+                if (wantMotion && Date.now() - lastMotion > 1000) showMotionPrompt();
+            }, 1200);
         },
         // Rounds are played sideways: take the whole screen where the browser allows it (Android).
         // iPhone Safari doesn't let pages go full screen; there the home-screen app is the way.

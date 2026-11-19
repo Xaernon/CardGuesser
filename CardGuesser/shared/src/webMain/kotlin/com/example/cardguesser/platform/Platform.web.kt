@@ -27,12 +27,16 @@ private fun jsEmojiPng(emoji: String, pixels: Int): String = js("window.cardGues
 private fun jsSetItem(key: String, value: String): Unit = js("window.cardGuesser.setItem(key, value)")
 
 private fun jsFullscreen(on: Boolean): Unit = js("window.cardGuesser.fullscreen(on)")
+private fun jsNeedMotion(on: Boolean): Unit = js("window.cardGuesser.needMotion(on)")
 
 @Composable
 actual fun LandscapeMode(enabled: Boolean) {
     // Rounds go full screen and sideways where the browser allows it (Android Chrome). iPhone Safari
     // can't do either, so the player turns the phone and the layout follows (or uses the home-screen app).
-    LaunchedEffect(enabled) { if (enabled) jsFullscreen(true) }
+    LaunchedEffect(enabled) {
+        if (enabled) jsFullscreen(true)
+        jsNeedMotion(enabled)  // iOS: offer an "Enable motion" button if no tilt data comes in
+    }
 }
 
 @Composable
