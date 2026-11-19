@@ -100,3 +100,5 @@ actual fun EmojiIcon(emoji: String, size: Dp, modifier: Modifier) {
 actual fun applyAppLanguage(code: String) {
     platform.Foundation.NSUserDefaults.standardUserDefaults.setObject(listOf(code), forKey = "AppleLanguages")
 }
+
+actual fun setPageBackground(argb: Int) = Unit

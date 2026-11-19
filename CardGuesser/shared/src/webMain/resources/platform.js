@@ -213,6 +213,13 @@ window.cardGuesser = (function () {
             if (loading) loading.remove();
             showHomeScreenTip();
         },
+        // The strip around the game (camera notch, rounded corners) shows the page: keep it the
+        // same colour as the game's background, flashes included.
+        pageBackground: function (css) {
+            if (document.body.style.backgroundColor === css) return;
+            document.documentElement.style.backgroundColor = css;
+            document.body.style.backgroundColor = css;
+        },
         // Rounds are played sideways: take the whole screen where the browser allows it (Android).
         // iPhone Safari doesn't let pages go full screen; there the home-screen app is the way.
         fullscreen: function (on) {

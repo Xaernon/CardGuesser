@@ -1,5 +1,9 @@
 package com.example.cardguesser.ui.screens
 
+import com.example.cardguesser.platform.setPageBackground
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.text.rememberTextMeasurer
@@ -144,6 +148,9 @@ fun GameScreen(
         }
     )
 
+    // keep the area outside the app (web: the camera notch strip) the same colour, flashes included
+    SideEffect { setPageBackground(background.toArgb()) }
+    DisposableEffect(Unit) { onDispose { setPageBackground(palette.background.toArgb()) } }
     Box(Modifier.fillMaxSize().background(background)) {
         Box(Modifier.fillMaxSize().safeDrawingPadding().padding(horizontal = 28.dp, vertical = 16.dp)) {
             val currentFlash = flash

@@ -112,3 +112,10 @@ actual fun EmojiIcon(emoji: String, size: Dp, modifier: Modifier) {
 private fun jsSetLanguage(code: String): Unit = js("window.cardGuesser.setLanguage(code)")
 
 actual fun applyAppLanguage(code: String) = jsSetLanguage(code)
+
+private fun jsPageBackground(css: String): Unit = js("window.cardGuesser.pageBackground(css)")
+
+actual fun setPageBackground(argb: Int) {
+    // #rrggbb of the opaque colour
+    jsPageBackground("#" + (argb and 0xFFFFFF).toString(16).padStart(6, '0'))
+}

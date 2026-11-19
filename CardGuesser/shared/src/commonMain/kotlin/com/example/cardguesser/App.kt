@@ -1,5 +1,8 @@
 package com.example.cardguesser
 
+import com.example.cardguesser.platform.setPageBackground
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.runtime.SideEffect
 import com.example.cardguesser.ui.components.CompactHeightThreshold
 import com.example.cardguesser.ui.components.LocalCompactHeight
 import androidx.compose.runtime.CompositionLocalProvider
@@ -77,6 +80,7 @@ fun App() {
     remember(languageCode) { applyAppLanguage(languageCode) }
     key(languageCode) {
         AppTheme(settings.palette, settings.font) {
+            SideEffect { setPageBackground(settings.palette.background.toArgb()) }
             BoxWithConstraints(Modifier.fillMaxSize().background(settings.palette.background)) {
               CompositionLocalProvider(LocalCompactHeight provides (maxHeight < CompactHeightThreshold)) {
                 AnimatedContent(

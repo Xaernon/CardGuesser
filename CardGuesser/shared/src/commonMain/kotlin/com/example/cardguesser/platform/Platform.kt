@@ -60,3 +60,10 @@ expect fun EmojiIcon(emoji: String, size: Dp, modifier: Modifier = Modifier)
  * rebuilds its screens with key(language) so every text is reloaded.
  */
 expect fun applyAppLanguage(code: String)
+
+/**
+ * Colour of whatever is behind the app, for the strip the app doesn't draw (the web version stays out
+ * of the camera notch, so the page shows there). Called with the full-screen colour as it changes,
+ * flashes included. Only the web does anything with it; native apps draw edge to edge.
+ */
+expect fun setPageBackground(argb: Int)

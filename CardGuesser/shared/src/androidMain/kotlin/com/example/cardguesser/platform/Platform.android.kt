@@ -171,3 +171,5 @@ fun reapplyAppLanguage() {
     java.util.Locale.setDefault(locale)
     android.os.LocaleList.setDefault(android.os.LocaleList(locale))
 }
+
+actual fun setPageBackground(argb: Int) = Unit
